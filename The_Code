@@ -1,3 +1,4 @@
+
 import time
 
 def SelectionSort(A):
@@ -28,8 +29,8 @@ def MergeSort(A):
         m = len(A) // 2
         L = A[:m]
         R = A[m:]
-        mergeSort(L)
-        mergeSort(R)
+        MergeSort(L)
+        MergeSort(R)
         i = j = k = 0
         while i < len(L) and j < len(R):
             if L[i] < R[j]:
@@ -77,30 +78,31 @@ def Heapify(A, n, i):
         L = r
     if L != i:
         A[i], A[L] = A[L], A[i]
-        heapify(A, n, L)
+        Heapify(A, n, L)
 
 def HeapSort(A):
     n = len(A)
     for i in range(n // 2 - 1, -1, -1):
-        heapify(A, n, i)
+        Heapify(A, n, i)
     for i in range(n - 1, 0, -1):
         A[i], A[0] = A[0], A[i]
-        heapify(A, i, 0)
+        Heapify(A, i, 0)
 
 def CountingSort(A):
-    final = [0 for i in range(len(A))]
-    a = [0 for i in range(256)]
-    b = ["" for _ in A]
-    for i in A:
-        a[ord(i)] += 1
-    for i in range(256):
-        a[i] += a[i - 1]
-    for i in range(len(A)):
-        final[a[ord(A[i])] - 1] = A[i]
-        a[ord(A[i])] -= 1
-    for i in range(len(A)):
-        b[i] = final[i]
-    return b
+    size = len(A)
+    output = [0] * size
+    count = [0] * 10000
+    for i in range(0, size):
+        count[A[i]] += 1
+    for i in range(1, 10000):
+        count[i] += count[i - 1]
+    i = size - 1
+    while i >= 0:
+        output[count[A[i]] - 1] = A[i]
+        count[A[i]] -= 1
+        i -= 1
+    for i in range(0, size):
+        A[i] = output[i]
 
 def CountSort(A, ex):
     n = len(A)
@@ -125,7 +127,7 @@ def RadixSort(A):
     max1 = max(A)
     ex = 1
     while max1 / ex > 1:
-        countSort(A, ex)
+        CountSort(A, ex)
         ex *= 10
 
 limit = 32
@@ -167,51 +169,61 @@ def Merge(A, l, m, r):
         A[k] = right[j]
         k += 1
         j += 1
+
 def TimSort(A):
     n = len(A)
-    m = calclim(n)
+    m = CalcLim(n)
     for start in range(0, n, m):
         end = min(start + m - 1, n - 1)
-        insertionSort(A, start, end)
+        InsertionSort_LR(A, start, end)
     size = m
     while size < n:
         for left in range(0, n, 2 * size):
             mid = min(n - 1, left + size - 1)
             right = min((left + 2 * size - 1), (n - 1))
             if mid < right:
-                merge(A, left, mid, right)
+                Merge(A, left, mid, right)
 
         size = 2 * size
 
 
-start = time.process_time()
-tic=time.time()
-n=100
-randomlist = []
+
+n=100000
+Array = [] #The array to be sorted
 with open( "numbers_in.txt", "r") as f:
     for i in range(1,n):
-        nb = f.read()
-        separated_numbers = nb.split()
+        numbers = f.readline()
+        separated_numbers = numbers.split()
         for i in separated_numbers:
-            randomlist.append(int(i))
+            Array.append(int(i))
 
-A_map = map(int, randomlist)
-A= list(A_map)
+start = time.process_time()
+tic=time.time()
 
 #Call whatever function to sort the array
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#SelectionSort(Array)
+#Bubble_Sort(Array)
+#InsertionSort(Array)
+#MergeSort(Array)
+#QuickSort(0,9999,Array)
+#HeapSort(Array)
+#CountingSort(Array)
+#RadixSort(Array)
+#TimSort(Array)
 
-
-with open ("random_numbers.txt", "w") as f:
-    f.write(" \n")
-    f.write("Our sorted list is:\n")
-    for i in range(len(A)):
-        f.write("%d" % A[i])
-        f.write(" ")
 
 end = time.process_time()
 tac=time.time()
-with open ("random_numbers.txt", "a") as f:
+
+with open ("output.txt", "w") as f:
+    f.write(" \n")
+    f.write("Our sorted list is:\n")
+    for i in range(len(Array)):
+        f.write("%d" % Array[i])
+        f.write(" ")
+
+with open ("output.txt", "a") as f:
     f.write(" \n")
     f.write(" \n")
     a = end - start
@@ -221,3 +233,5 @@ with open ("random_numbers.txt", "a") as f:
     b=tac-tic
     f.write("The time taken by time() is ")
     f.write(str(b))
+
+
